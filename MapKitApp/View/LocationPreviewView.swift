@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct LocatonPreviewView: View {
+struct LocationPreviewView: View {
     
     let location:Location
     
@@ -38,14 +38,14 @@ struct LocatonPreviewView_Previews: PreviewProvider {
         ZStack{
             Color.yellow.opacity(0.4).ignoresSafeArea()
             /*現在はダミーデータを入れているアプリを作成する際にはFirebaseから取得したデータを入れる*/
-            LocatonPreviewView(location: LocationsDataService.locations.first!)
+            LocationPreviewView(location: LocationsDataService.locations.first!)
                 .padding()
         }
     }
 }
 
 //Viewを生成する拡張関数
-extension LocatonPreviewView{
+extension LocationPreviewView{
     private var imageSection: some View{
         ZStack(){
             if let imageNames = location.imageNames.first{
@@ -81,7 +81,7 @@ extension LocatonPreviewView{
                 .foregroundStyle(.black)
                 .frame(width: 100,height: 25)
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.bordered)
     }
     private var NextButton: some View{
         Button{
