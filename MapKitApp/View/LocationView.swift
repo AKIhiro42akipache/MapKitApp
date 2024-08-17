@@ -33,74 +33,72 @@ struct LocationView: View {
         }
     }
 }
-    
-    
-    #Preview {
-        LocationView()
-            .environmentObject(LocationViewModel())
+#Preview {
+    LocationView()
+        .environmentObject(LocationViewModel())
+}
+
+extension LocationView{
+    private var header: some View{
+        VStack{
+            Button(action:viewModel.toggleLocationList){
+                Text(viewModel.mapLocation.name + ", " + viewModel.mapLocation.cityName)
+                    .font(.headline)
+                    .fontWeight(.black)
+                    .foregroundStyle(.black.opacity(0.7))
+                    .frame(height:55)
+                    .frame(maxWidth: .infinity)
+                    .animation(.none, value: viewModel.mapLocation)
+                //Overlayは↑で作成したViewに別のViewを重ねる
+                    .overlay(alignment: .leading){
+                        Image(systemName: "arrow.down")
+                            .font(.headline)
+                            .foregroundStyle(.black.opacity(0.7))
+                            .padding()
+                            .rotationEffect(Angle(degrees: viewModel.showLocationList ? 180: 0))
+                    }
+            }
+            
+            if viewModel.showLocationList{
+                LocationList()
+            }
+        }
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .shadow(color: Color.black.opacity(0.3), radius: 20,
+                x: 0,y: 15)
     }
     
-    extension LocationView{
-        private var header: some View{
-            VStack{
-                Button(action:viewModel.toggleLocationList){
-                    Text(viewModel.mapLocation.name + ", " + viewModel.mapLocation.cityName)
-                        .font(.headline)
-                        .fontWeight(.black)
-                        .foregroundStyle(.black.opacity(0.7))
-                        .frame(height:55)
-                        .frame(maxWidth: .infinity)
-                        .animation(.none, value: viewModel.mapLocation)
-                    //Overlayは↑で作成したViewに別のViewを重ねる
-                        .overlay(alignment: .leading){
-                            Image(systemName: "arrow.down")
-                                .font(.headline)
-                                .foregroundStyle(.black.opacity(0.7))
-                                .padding()
-                                .rotationEffect(Angle(degrees: viewModel.showLocationList ? 180: 0))
+    private var mapLayer: some View{
+        //MapとAnnotitionとVStackの処理はスコープを別にする
+        //Positionを$mapRegionからBindingしないと要素を押下しても
+        Map(position: $viewModel.mapRegion) {
+            // ピンの追加方法
+            ForEach(viewModel.locations) { location in
+                // アノテーションの表示にMapAnnotationを使用
+                Annotation("location", coordinate: location.coordinates) {
+                    LocationMapAnnotationView()
+                        .scaleEffect(viewModel.mapLocation == location ? 1 : 0.7)
+                        .shadow(radius: 1)
+                        .onTapGesture {
+                            viewModel.showNextLocation(location: location)
                         }
                 }
-                
-                if viewModel.showLocationList{
-                    LocationList()
-                }
-            }
-            .background(Color.white)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .shadow(color: Color.black.opacity(0.3), radius: 20,
-                    x: 0,y: 15)
-        }
-        
-        private var mapLayer: some View{
-            //MapとAnnotitionとVStackの処理はスコープを別にする
-            //Positionを$mapRegionからBindingしないと要素を押下しても
-            Map(position: $viewModel.mapRegion) {
-                // ピンの追加方法
-                ForEach(viewModel.locations) { location in
-                    // アノテーションの表示にMapAnnotationを使用
-                    Annotation("location", coordinate: location.coordinates) {
-                        LocationMapAnnotationView()
-                            .scaleEffect(viewModel.mapLocation == location ? 1 : 0.7)
-                            .shadow(radius: 1)
-                            .onTapGesture {
-                                viewModel.showNextLocation(location: location)
-                            }
-                    }
-                    // パンIconの下に表示されるタイトルを非表示に設定
-                    .annotationTitles(.hidden)
-                }
+                // パンIconの下に表示されるタイトルを非表示に設定
+                .annotationTitles(.hidden)
             }
         }
-        private var locationsPreviewStack: some View{
-            ZStack {
-                ForEach(viewModel.locations) { location in
-                    if viewModel.mapLocation == location {
-                        LocationPreviewView(location: location)
-                            .shadow(color: Color.black.opacity(0.3), radius: 20)
-                            .padding()
-                            .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .identity))
-                    }
+    }
+    private var locationsPreviewStack: some View{
+        ZStack {
+            ForEach(viewModel.locations) { location in
+                if viewModel.mapLocation == location {
+                    LocationPreviewView(location: location)
+                        .shadow(color: Color.black.opacity(0.3), radius: 20)
+                        .padding()
+                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .identity))
                 }
             }
         }
     }
+}

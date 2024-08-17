@@ -18,7 +18,7 @@ struct LocationPreviewView: View {
                 imageSection
                 titleSection
             }
-                
+            
             VStack(spacing:8){
                 LoarnMoreButton
                 NextButton
