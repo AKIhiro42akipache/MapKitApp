@@ -11,6 +11,7 @@ struct LocationPreviewView: View {
     
     let location:Location
     @EnvironmentObject private var viewModel:LocationViewModel
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         HStack(alignment:.bottom){
@@ -80,7 +81,8 @@ extension LocationPreviewView{
         }label: {
             Text("さらに詳しく")
                 .font(.headline)
-                .foregroundStyle(.black)
+                //現在ダークモードかライトモードを取得する
+                .foregroundStyle(colorScheme == .dark ? .white : .black)
                 .frame(width: 100,height: 25)
         }
         .buttonStyle(.bordered)
@@ -91,7 +93,7 @@ extension LocationPreviewView{
         }label:{
             Text("次へ")
                 .font(.headline)
-                .foregroundStyle(.black)
+                .foregroundStyle(colorScheme == .dark ? .white : .black)
                 .frame(width: 100,height: 25)
         }
         .buttonStyle(.bordered)

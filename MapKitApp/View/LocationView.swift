@@ -16,6 +16,7 @@ struct LocationView: View {
     @EnvironmentObject private var viewModel:LocationViewModel
     @State private var position = MapCameraPosition.region(
         MKCoordinateRegion(center:.parking, span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)))
+    let maxWidthForIpad:CGFloat = 700
     
     var body: some View {
         ZStack {
@@ -24,6 +25,8 @@ struct LocationView: View {
             VStack(spacing: 0) {
                 header
                     .padding()
+                //IPadモード対応
+                    .frame(maxWidth: 700)
                 Spacer()
                 locationsPreviewStack
             }
@@ -88,6 +91,12 @@ extension LocationView{
                 .annotationTitles(.hidden)
             }
         }
+        //地図で表示されている領域を押下したときにシートが開かれていた場合は閉じる
+        .onTapGesture {
+            if viewModel.showLocationList{
+                viewModel.toggleLocationList()
+            }
+        }
     }
     private var locationsPreviewStack: some View{
         ZStack {
@@ -96,6 +105,9 @@ extension LocationView{
                     LocationPreviewView(location: location)
                         .shadow(color: Color.black.opacity(0.3), radius: 20)
                         .padding()
+                    //Ipadモードの対応
+                        .frame(maxWidth: maxWidthForIpad)
+                        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
                         .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .identity))
                 }
             }

@@ -46,7 +46,9 @@ extension LocationList{
             VStack(alignment:.leading){
                 Text(location.name)
                     .font(.headline)
+                    .foregroundStyle(.black)
                 Text(location.cityName)
+                    .foregroundStyle(.black)
                     .font(.subheadline)
             }
             .frame(maxWidth: .infinity,alignment: .leading)

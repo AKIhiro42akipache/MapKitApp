@@ -12,6 +12,7 @@ struct LocationDetailView: View {
     
     @EnvironmentObject private var viewModel:LocationViewModel
     @State var position:MapCameraPosition
+    @Environment(\.colorScheme) private var colorScheme
     let location:Location
     
     init(location: Location) {
@@ -58,7 +59,7 @@ extension LocationDetailView{
                 Image(imageName)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: DisplayInfo.width)
+                    .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : DisplayInfo.width)
                     .clipped()
             }
         }
@@ -71,6 +72,7 @@ extension LocationDetailView{
             Text(location.name)
                 .font(.title2)
                 .fontWeight(.semibold)
+                .foregroundStyle(.primary)
             Text(location.cityName)
                 .font(.title3)
                 .foregroundStyle(.secondary)
@@ -93,8 +95,6 @@ extension LocationDetailView{
     
     private var mapLayer: some View{
         return Map(position: $position){
-            /*TODO 細かい箇所だが、ピンとテキスト名が離れているため
-             調整する(近づける)*/
             Annotation(location.name, coordinate: location.coordinates) {
                 LocationMapAnnotationView()
                     .shadow(radius: 10)
@@ -117,7 +117,7 @@ extension LocationDetailView{
             Image(systemName: "xmark")
                 .font(.headline)
                 .padding(16)
-                .foregroundStyle(.black.opacity(0.6))
+                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
                 .background(.thinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .shadow(radius: 4)
