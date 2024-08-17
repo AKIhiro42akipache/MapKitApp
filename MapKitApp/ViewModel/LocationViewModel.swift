@@ -26,6 +26,8 @@ class LocationViewModel:ObservableObject{
     
     //show list of location
     @Published var showLocationList:Bool = false
+    //show location detail View sheet
+    @Published var sheetLocation: Location? = nil
     //Spanは地図上にどれだけの範囲を表示するかを指定する
     let mapSpan = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
     
@@ -44,7 +46,7 @@ class LocationViewModel:ObservableObject{
         }
     }
     
-   func toggleLocationList(){
+    func toggleLocationList(){
         withAnimation(.easeInOut){
             showLocationList = !showLocationList
         }
@@ -55,5 +57,26 @@ class LocationViewModel:ObservableObject{
             mapLocation = location
             showLocationList = false
         }
+    }
+    
+    func nextButtonClicked(){
+        guard let currentIndex = locations.firstIndex(where: {$0 == mapLocation}) else{
+            print("現在位置のインデックスが見つかりませんでした")
+            return
+        }
+        
+        //現在の値+1をした位置を次のロケーションとする
+        let nextIndex = currentIndex + 1
+        //indicesはそのコレクションの全ての有効なインデックス（0からlocations.count - 1まで）を表す
+        //nextIndexがその有効範囲内に含まれているかどうかを確認する
+        //この処理は、nextIndexがlocationsの有効なインデックス範囲に含まれていることを確認している
+        guard locations.indices.contains(nextIndex) else{
+            //最初の位置と同じ位置に持ってくる
+            guard let firstLocation = locations.first else {return}
+            showNextLocation(location: firstLocation)
+            return
+        }
+        let nextLocation = locations[nextIndex]
+        showNextLocation(location: nextLocation)
     }
 }
