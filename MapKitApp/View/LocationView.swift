@@ -112,5 +112,14 @@ extension LocationView{
                 }
             }
         }
+        //スワイプ処理 本番アプリ実装時にはカルーセルを使ってUIを実装する
+        .gesture(
+            DragGesture()
+                .onEnded { value in
+                    if value.translation.width < -100 {
+                        viewModel.nextButtonClicked()
+                    }
+                }
+        )
     }
 }
